@@ -6,12 +6,12 @@ import { Event } from "./event";
 
 
 export class Clock extends EventEmitter<number> {
-    private gameEvents: WeightedArray<Event>;
+    gameEvents: WeightedArray<Event>;
     day: number;
     constructor() {
         super();
         this.day = 0;
-        this.gameEvents = new WeightedArray();
+        this.gameEvents = new WeightedArray<Event>();
     }
 
     runEvents(_engine: Engine) : void {
