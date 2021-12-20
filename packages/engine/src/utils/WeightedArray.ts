@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 /**
  * A weighted array is an array which stores elements which have a **weight** property. 
@@ -8,6 +9,7 @@
  * long as you don't mutate the array very often getting a random value will be in constant time.
  * 
  */
+
 export class WeightedArray<T extends { weight: number}> extends Array<T> {
     private aliases?: Array<[odds: number, alias: number]>;
 
@@ -50,18 +52,16 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
         if (!this.aliases) this.init();
         const rng = Math.random() * this.length;
         const rounded = Math.floor(rng);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const [odds, alias] = this.aliases![rounded];
         return (rng - rounded) > odds ? this[alias] : this[rounded];
     }
 
-    randomMany(amount = 3) : Array<T> {
+    randomMany(amount: number) : Array<T> {
         if (!this.aliases) this.init();
         const res = [];
         while (amount--) {
             const rng = Math.random() * this.length;
             const rounded = Math.floor(rng);
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const [odds, alias] = this.aliases![rounded];
             res.push((rng - rounded) > odds ? this[alias] : this[rounded]);
         }
@@ -93,5 +93,5 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
         arr.aliases = this.aliases;
         return arr;
     }
-    
+
 }

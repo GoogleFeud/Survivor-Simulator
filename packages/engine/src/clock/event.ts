@@ -31,11 +31,13 @@ export class Event {
         this.amount = data.amount || Infinity;
     }
 
-    run(engine: Engine) : boolean {
-        if (this.amount === 0 || (this.checker && !this.checker(engine))) return false;
-        this.executor(engine);
+    canRun(engine: Engine, categories?: Array<string>) : boolean|undefined {
+        return this.amount !== 0 && (categories ? categories.every(cat => this.categories.includes(cat)) : true) || (this.checker ? this.checker(engine) : true);
+    }
+
+    run(engine: Engine) {
         this.amount--;
-        return true;
+        this.executor(engine);
     }
 
 }
