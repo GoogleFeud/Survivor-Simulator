@@ -13,11 +13,11 @@ export type EventListener = (...args: Array<unknown>) => false|unknown;
 export class EventEmitter<T extends string|number> {
     private _events: Record<T, Array<EventListener>> = {} as Record<T, Array<EventListener>>;
 
-    on(event: T, cb: EventListener) : EventListener {
+    on(event: T, cb: EventListener) : () => void {
         if (event in this._events) {
             this._events[event].push(cb);
         } else this._events[event] = [cb];
-        return cb;
+        return () => this._events[event].splice(this._events[event].indexOf(cb), 1);
     }
 
     off(event: T, cb: EventListener) : void {

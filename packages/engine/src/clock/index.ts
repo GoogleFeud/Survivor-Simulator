@@ -2,11 +2,10 @@
 import { Engine } from "..";
 import { EventEmitter } from "../utils/EventEmitter";
 import { WeightedArray } from "../utils/WeightedArray";
-import { Event } from "./event";
+import { Event, IEventData } from "./event";
 
 export const enum DayPhases {
     Begin,
-    Middle,
     End
 }
 
@@ -22,16 +21,24 @@ export class Clock extends EventEmitter<number> {
     }
 
     runEvents(amount: number, categories?: Array<string>) : void {
-        const newEvents = new WeightedArray(...this.gameEvents.filter(el => el.canRun(this.engine, categories)));
-        while (amount--) {
-            const event = newEvents.random();
+        for (const event of this.gameEvents.randomFilter(amount, (el) => el.canRun(this.engine, categories))) {
             event.run(this.engine);
         }
     }
 
-    inc() : void {
+    addEvents(...events: Array<IEventData>) : void {
+        this.gameEvents.push(...events.map(ev => new Event(ev)));
+    }
+
+    move() : void {
         this.emit(this.day++, DayPhases.End, this.engine);
         this.emit(this.day, DayPhases.Begin, this.engine);
+    }
+
+    skipTo(day: number) : void {
+        while(this.day !== day) {
+            this.move();
+        }
     }
 
 }

@@ -10,7 +10,5 @@ const arr = new WeightedArray(
     { weight: 4 }
 );
 
-const otherArr = arr.filter((el) => el.weight > 4);
-
-console.log(otherArr.randomMany(100));
-console.log(arr.randomMany(100));
+//console.log(arr.randomMany(100));
+console.log(arr.randomFilter(100000, (item) => item.weight !== 5 && item.weight !== 4));

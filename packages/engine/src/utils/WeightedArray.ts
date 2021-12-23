@@ -7,7 +7,6 @@
  * - Getting a single random element - `O(1)`
  * - Weighted cache initialization - `O(n)`. Initialization is ran every time you call any of the random functions **after** you have modified the array in some way (push, pop, splice, shift). So as
  * long as you don't mutate the array very often getting a random value will be in constant time.
- * 
  */
 
 export class WeightedArray<T extends { weight: number}> extends Array<T> {
@@ -50,7 +49,7 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
 
     random() : T {
         if (!this.aliases) this.init();
-        const rng = Math.random() * this.length;
+        const rng = Math.random() * this.aliases!.length;
         const rounded = Math.floor(rng);
         const [odds, alias] = this.aliases![rounded];
         return (rng - rounded) > odds ? this[alias] : this[rounded];
@@ -60,10 +59,36 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
         if (!this.aliases) this.init();
         const res = [];
         while (amount--) {
-            const rng = Math.random() * this.length;
+            const rng = Math.random() * this.aliases!.length;
             const rounded = Math.floor(rng);
             const [odds, alias] = this.aliases![rounded];
             res.push((rng - rounded) > odds ? this[alias] : this[rounded]);
+        }
+        return res;
+    }
+
+    /**
+     * Applies a filter before getting the random values. The second parameter of the filter callback is an array of the already collected elements,
+     * so you can easily make it so no duplicate items are allowed.
+     */
+    randomFilter(amount: number, filter: (el: T, collected: Array<T>) => unknown) : Array<T> {
+        if (!this.aliases) this.init();
+        const res = [];
+        while (amount--) {
+            const rng = Math.random() * this.aliases!.length;
+            const rounded = Math.floor(rng);
+            const [odds, alias] = this.aliases![rounded];
+            const index = (rng - rounded) > odds ? alias : rounded;
+            if (filter(this[index], res)) res.push(this[index]);
+            else {
+                for (let i=0; i < this.aliases!.length; i++) {
+                    const [, alias] = this.aliases![i];
+                    if (index !== alias && filter(this[alias], res)) {
+                        res.push(this[alias]);
+                        break;
+                    }
+                }
+            }
         }
         return res;
     }
