@@ -69,7 +69,7 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
 
     /**
      * Applies a filter before getting the random values. The second parameter of the filter callback is an array of the already collected elements,
-     * so you can easily make it so no duplicate items are allowed.
+     * so you can easily make it so no duplicate items are not allowed.
      */
     randomFilter(amount: number, filter: (el: T, collected: Array<T>) => unknown) : Array<T> {
         if (!this.aliases) this.init();
