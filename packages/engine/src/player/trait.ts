@@ -1,11 +1,12 @@
 import { EventEmitter } from "../utils/EventEmitter";
 
 
-export interface ITrait {
+export interface ITraitData {
     id: string,
     name: string,
     weight: number,
-    description?: string
+    description?: string,
+    collidesWith?: Array<string>
 }
 
 export class Trait extends EventEmitter<string|number> {
@@ -13,12 +14,14 @@ export class Trait extends EventEmitter<string|number> {
     name: string;
     weight: number;
     description?: string;
-    constructor(data: ITrait) {
+    collidesWith: Array<string>;
+    constructor(data: ITraitData) {
         super();
         this.id = data.id;
         this.name = data.name;
         this.weight = data.weight;
         this.description = data.description;
+        this.collidesWith = data.collidesWith || [];
     }
     
 }

@@ -1,5 +1,5 @@
 
-import { Engine } from "..";
+import { Engine } from "../engine";
 import { EventEmitter } from "../utils/EventEmitter";
 import { WeightedArray } from "../utils/WeightedArray";
 import { Event, IEventData } from "./event";

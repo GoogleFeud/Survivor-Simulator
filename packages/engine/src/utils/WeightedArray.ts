@@ -83,7 +83,7 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
             else {
                 for (let i=0; i < this.aliases!.length; i++) {
                     const [, alias] = this.aliases![i];
-                    if (index !== alias && filter(this[alias], res)) {
+                    if (index !== alias && this[alias] && filter(this[alias], res)) {
                         res.push(this[alias]);
                         break;
                     }
