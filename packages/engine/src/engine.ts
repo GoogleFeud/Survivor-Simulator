@@ -1,6 +1,6 @@
 
 import seedrandom from "seedrandom";
-import { Event, IEventData } from "./clock/event";
+import { Clock } from "./clock";
 import { Alliance } from "./player/alliance";
 import { IPlayerData, Player } from "./player/player";
 import { Strategy } from "./player/strategy";
@@ -19,7 +19,7 @@ export interface IEngineSettings {
 
 export class Engine extends EventEmitter<string|number> {
     traits: WeightedArray<Trait>;
-    events: WeightedArray<Event>;
+    clock: Clock;
     players: Collection<Player, number>;
     alliances: Array<Alliance>;
     strategies: WeightedArray<typeof Strategy>;
@@ -28,7 +28,7 @@ export class Engine extends EventEmitter<string|number> {
         super();
         seedrandom(options.seed, { global: true });
         this.traits = new WeightedArray();
-        this.events = new WeightedArray();
+        this.clock = new Clock(this);
         this.players = new Collection();
         this.alliances = [];
         this.strategies = new WeightedArray();
@@ -56,12 +56,8 @@ export class Engine extends EventEmitter<string|number> {
         }
     }
 
-    addTraits(...traits: Array<ITraitData>) : void {
-        this.traits.push(...traits.map(t => new Trait(t)));
-    }
-
-    addEvents(...events: Array<IEventData>) : void {
-        this.events.push(...events.map(e => new Event(e)));
+    addTraits(...traits: Array<ITraitData|Trait>) : void {
+        this.traits.push(...traits.map(t => t instanceof Trait ? t : new Trait(t)));
     }
 
     addStrategies(...strats: Array<typeof Strategy>) : void {

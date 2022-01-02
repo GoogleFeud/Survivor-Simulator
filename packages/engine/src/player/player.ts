@@ -60,6 +60,11 @@ export class Player {
         this.strategy = data.strategy || new (engine.strategies.random())(this); 
     }
 
+    emit(event: string|number, ...data: Array<unknown>) : void {
+        for (const [, trait] of this.traits) trait.emit(event, ...data);
+        this.strategy.emit(event, ...data);
+    }
+
     get name() : string {
         return `${this.firstName} ${this.lastName}`;
     }

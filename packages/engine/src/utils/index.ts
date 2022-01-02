@@ -23,3 +23,7 @@ export namespace Random {
     }
     
 }
+
+export * from "./EventEmitter";
+export * from "./Collection";
+export * from "./WeightedArray";

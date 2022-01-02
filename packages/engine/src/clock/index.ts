@@ -9,7 +9,7 @@ export const enum DayPhases {
     End
 }
 
-export class Clock extends EventEmitter<number> {
+export class Clock extends EventEmitter<number, [DayPhases, Engine]> {
     engine: Engine;
     gameEvents: WeightedArray<Event>;
     day: number;
@@ -42,3 +42,5 @@ export class Clock extends EventEmitter<number> {
     }
 
 }
+
+export * from "./event";
