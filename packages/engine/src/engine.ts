@@ -1,6 +1,7 @@
 
 import seedrandom from "seedrandom";
 import { Clock } from "./clock";
+import { Mod } from "./mods";
 import { Alliance } from "./player/alliance";
 import { IPlayerData, Player } from "./player/player";
 import { Strategy } from "./player/strategy";
@@ -12,7 +13,7 @@ import { EventEmitter } from "./utils/EventEmitter";
 import { WeightedArray } from "./utils/WeightedArray";
 
 export interface IEngineSettings {
-    mods?: Array<unknown>,
+    mods?: Array<Mod>,
     days?: number,
     seed?: string
 }
@@ -24,6 +25,7 @@ export class Engine extends EventEmitter<string|number> {
     alliances: Array<Alliance>;
     strategies: WeightedArray<typeof Strategy>;
     tribes: Collection<Tribe>;
+    mods: Array<Mod>;
     constructor(options: IEngineSettings) {
         super();
         seedrandom(options.seed, { global: true });
@@ -33,6 +35,10 @@ export class Engine extends EventEmitter<string|number> {
         this.alliances = [];
         this.strategies = new WeightedArray();
         this.tribes = new Collection();
+        this.mods = options.mods || [];
+        if (options.mods) {
+            for (const mod of options.mods) mod.load(this, mod.settings);
+        }
     }
 
     /**
