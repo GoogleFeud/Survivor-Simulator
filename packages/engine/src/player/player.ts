@@ -1,6 +1,7 @@
 import { Engine } from "../engine";
-import { Random } from "../utils";
+import { Collection, Random } from "../utils";
 import { Alliance } from "./alliance";
+import { RelationshipMap } from "./relationships";
 import { Strategy } from "./strategy";
 import { Trait } from "./trait";
 import { Tribe } from "./tribe";
@@ -33,9 +34,10 @@ export class Player {
         appearance: number,
         stamina: number
     };
-    traits: Map<string, Trait>;
+    traits: Collection<Trait>;
     tribe: Tribe;
     strategy: Strategy;
+    relationships: RelationshipMap;
     constructor(engine: Engine, tribe: Tribe, data: IPlayerData) {
         this.id = engine.players.size + 1;
         this.engine = engine;
@@ -49,7 +51,7 @@ export class Player {
             appearance: Random.btw(0, 10),
             stamina: Random.btw(0, 10)
         };
-        this.traits = new Map((data.traits ? data.traits : engine.traits.randomFilter(Random.btw(1, 3), (trait, known) => {
+        this.traits = new Collection((data.traits ? data.traits : engine.traits.randomFilter(Random.btw(1, 3), (trait, known) => {
             if (known.includes(trait)) return;
             for (const knownTrait of known) {
                 if (knownTrait.collidesWith.includes(trait.id) || trait.collidesWith.includes(knownTrait.id)) return;
@@ -58,6 +60,7 @@ export class Player {
         })).map(t => [t.id, t]));
         this.tribe = tribe;
         this.strategy = data.strategy || new (engine.strategies.random())(this); 
+        this.relationships = new RelationshipMap();
     }
 
     emit(event: string|number, ...data: Array<unknown>) : void {
