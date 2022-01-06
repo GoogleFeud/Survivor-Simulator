@@ -41,7 +41,7 @@ export class Alliance {
      */
     calculatePower() : number {
         const allPlayers = this.allPlayers;
-        const relationshipLevel = this.calculatePower();
+        const relationshipLevel = this.calculateRelationships();
         let power = (10 - allPlayers.length) + relationshipLevel;
 
         for (const alliance of this.tribe.engine.alliances) {
@@ -54,7 +54,7 @@ export class Alliance {
             }
         }
 
-        if (allPlayers.length > Math.floor(this.tribe.players.length / 2)) power++;
+        if (allPlayers.length > Math.floor(this.tribe.players.length / 2)) power += 3;
 
         return power;
     }

@@ -1,5 +1,5 @@
 import { Engine } from "../engine";
-import { Collection, Random } from "../utils";
+import { Collection, Random, STOPPED_EVENT } from "../utils";
 import { Alliance } from "./alliance";
 import { RelationshipMap } from "./relationships";
 import { Strategy } from "./strategy";
@@ -63,9 +63,11 @@ export class Player {
         this.relationships = new RelationshipMap();
     }
 
-    emit(event: string|number, ...data: Array<unknown>) : void {
+    emit<T>(event: string|number, ...data: Array<unknown>) : T|undefined {
         for (const [, trait] of this.traits) trait.emit(event, ...data);
-        this.strategy.emit(event, ...data);
+        const res = this.strategy.emit(event, ...data);
+        if (res === STOPPED_EVENT) return undefined;
+        return res[0];
     }
 
     get name() : string {

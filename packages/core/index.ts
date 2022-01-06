@@ -6,4 +6,4 @@ export default {
     load: (engine: Engine) => {
         engine.
     } 
-} as Mod;
+};

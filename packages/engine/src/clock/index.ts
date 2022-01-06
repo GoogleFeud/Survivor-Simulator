@@ -9,7 +9,7 @@ export const enum DayPhases {
     End
 }
 
-export class Clock extends EventEmitter<number, [DayPhases, Engine]> {
+export class Clock extends EventEmitter<"move"|number> {
     engine: Engine;
     gameEvents: WeightedArray<Event>;
     day: number;
@@ -31,8 +31,9 @@ export class Clock extends EventEmitter<number, [DayPhases, Engine]> {
     }
 
     move() : void {
-        this.emit(this.day++, DayPhases.End, this.engine);
-        this.emit(this.day, DayPhases.Begin, this.engine);
+        this.emit(this.day++, DayPhases.End);
+        this.emit(this.day, DayPhases.Begin);
+        this.emit("move", this.day);
     }
 
     skipTo(day: number) : void {
