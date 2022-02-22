@@ -26,6 +26,12 @@ export class Clock extends EventEmitter<"move"|number> {
         }
     }
 
+    runEventsUnique(amount: number, categories?: Array<string>) : void {
+        for (const event of this.gameEvents.randomFilter(amount, (el, collected) => !collected.includes(el) && el.canRun(this.engine, categories))) {
+            event.run(this.engine);
+        }
+    }
+
     addEvents(...events: Array<IEventData>) : void {
         this.gameEvents.push(...events.map(ev => new Event(ev)));
     }

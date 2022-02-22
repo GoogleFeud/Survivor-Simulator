@@ -51,21 +51,30 @@ export class Player {
             appearance: Random.btw(0, 10),
             stamina: Random.btw(0, 10)
         };
-        this.traits = new Collection((data.traits ? data.traits : engine.traits.randomFilter(Random.btw(1, 3), (trait, known) => {
-            if (known.includes(trait)) return;
-            for (const knownTrait of known) {
-                if (knownTrait.collidesWith.includes(trait.id) || trait.collidesWith.includes(knownTrait.id)) return;
-            }
-            return true;
-        })).map(t => [t.id, t]));
+        this.traits = new Collection(engine.traits.randomNonColliding(Random.btw(1, 3)).map(t => [t.id, t]));
         this.tribe = tribe;
         this.strategy = data.strategy || new (engine.strategies.random())(this); 
         this.relationships = new RelationshipMap();
     }
 
-    emit<T>(event: string|number, ...data: Array<unknown>) : T|undefined {
-        for (const [, trait] of this.traits) trait.emit(event, ...data);
-        const res = this.strategy.emit(event, ...data);
+    /**
+     * Sends an event to the player's traits and strategies. The traits **cannot**
+     * stop the event from getting to the strategy. 
+     * 
+     * Returns all results returned from all event listeners attached to the strategy. You could use
+     * [[Player.emitOne()]] to get only the first result.
+     */
+
+    emit<T extends [...Array<unknown>]>(event: string|number, ...data: Array<unknown>) : T|undefined {
+        for (const [, trait] of this.traits) trait.emit(event, this, ...data);
+        const res = this.strategy.emit<T>(event, ...data);
+        if (res === STOPPED_EVENT) return undefined;
+        return res;
+    }
+
+    emitOne<T>(event: string|number, ...data: Array<unknown>) : T | undefined {
+        for (const [, trait] of this.traits) trait.emit(event, this, ...data);
+        const res = this.strategy.emit<[T]>(event, ...data);
         if (res === STOPPED_EVENT) return undefined;
         return res[0];
     }
