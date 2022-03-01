@@ -98,9 +98,11 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
         return super.push(...items);
     }
 
-    override splice(start: number, deleteCount: number | undefined) : Array<T> {
+    override splice(start: number, deleteCount?: number) : Array<T>
+    override splice(start: number, deleteCount: number, ...toAdd: Array<T>) : Array<T> {
         delete this.aliases;
-        return super.splice(start, deleteCount);
+        if (toAdd.length) return super.splice(start, deleteCount, ...toAdd);
+        return super.splice(start, deleteCount || 0, ...toAdd);
     }
     
     override pop() : T | undefined {
@@ -111,6 +113,11 @@ export class WeightedArray<T extends { weight: number}> extends Array<T> {
     override shift() : T | undefined {
         delete this.aliases;
         return super.shift();
+    }
+
+    override unshift(item: T) : number {
+        delete this.aliases;
+        return super.unshift(item);
     }
 
     clone() : WeightedArray<T> {

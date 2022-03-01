@@ -1,5 +1,3 @@
-
-
 export * from "./alliance";
 export * from "./player";
 export * from "./strategy";

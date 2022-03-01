@@ -63,10 +63,10 @@ export class Player {
             appearance: Random.btw(0, 10),
             stamina: Random.btw(0, 10)
         };
-        this.traits = new Collection(engine.traits.randomNonColliding(Random.btw(1, 3)).map(t => [t.id, t]));
         this.tribe = tribe;
-        this.strategy = data.strategy || this.engine.strategies.randomInstance(this);
         this.relationships = new RelationshipMap();
+        this.strategy = data.strategy || this.engine.strategies.smartRandom(this);
+        this.traits = new Collection(engine.traits.smartRandom(Random.btw(1, 3), this).map(t => [t.id, t]));
     }
 
     /**
