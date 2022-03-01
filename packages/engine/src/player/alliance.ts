@@ -12,14 +12,14 @@ export class Alliance {
         this.tribe = tribe;
     }
 
-    get allPlayers() : Array<Player> {
+    allPlayers() : Array<Player> {
         const vals = this.members.valArray();
         vals.push(this.creator);
         return vals;
     }
 
     calculateRelationships() : number {
-        const allPlayers = this.allPlayers;
+        const allPlayers = this.allPlayers();
         let totalRelationships = 0;
         for (const player of allPlayers) {
             for (const otherPlayer of allPlayers) {
@@ -40,7 +40,7 @@ export class Alliance {
      * The lower the returned number, the higher the chance of the alliance failing.
      */
     calculatePower() : number {
-        const allPlayers = this.allPlayers;
+        const allPlayers = this.allPlayers();
         const relationshipLevel = this.calculateRelationships();
         let power = (10 - allPlayers.length) + relationshipLevel;
 
@@ -48,7 +48,7 @@ export class Alliance {
             if (alliance.tribe !== this.tribe) continue;
             if (relationshipLevel < alliance.calculateRelationships()) {
                 for (const player of allPlayers) {
-                    if (alliance.allPlayers.includes(player)) power--;
+                    if (alliance.allPlayers().includes(player)) power--;
                 }
                 power--;
             }

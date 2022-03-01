@@ -1,6 +1,6 @@
 import { Engine } from "../engine";
 import { Alliance } from "./alliance";
-import { Player } from "./player";
+import { Player, PlayerState } from "./player";
 
 export interface ITribeData {
     name: string,
@@ -19,6 +19,22 @@ export class Tribe {
 
     get players() : Array<Player> {
         return this.engine.players.filterArray(p => p.tribe === this);
+    }
+
+    get eliminated() : Array<Player> {
+        return this.engine.players.filterArray(player => player.state === PlayerState.Eliminated && player.tribe === this);
+    }
+
+    get active() : Array<Player> {
+        return this.engine.players.filterArray(player => player.state !== PlayerState.Eliminated && player.tribe === this);
+    }
+
+    get inGame() : Array<Player> {
+        return this.engine.players.filterArray(player => player.state === PlayerState.InGame && player.tribe === this);
+    }
+
+    get inLimbo() : Array<Player> {
+        return this.engine.players.filterArray(player => player.state === PlayerState.Limbo && player.tribe === this);
     }
 
     get alliances() : Array<Alliance> {

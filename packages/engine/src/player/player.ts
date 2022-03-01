@@ -21,9 +21,20 @@ export interface IPlayerData {
     strategy?: Strategy
 }
 
+export const enum PlayerState {
+    InGame,
+    Eliminated,
+    /**
+     * If the player is exiled, on extinction island,
+     * on redemption island.
+     */
+    Limbo
+}
+
 export class Player {
     engine: Engine;
     id: number;
+    state: PlayerState;
     firstName: string;
     lastName: string;
     age: number;
@@ -39,6 +50,7 @@ export class Player {
     strategy: Strategy;
     relationships: RelationshipMap;
     constructor(engine: Engine, tribe: Tribe, data: IPlayerData) {
+        this.state = PlayerState.InGame;
         this.id = engine.players.size + 1;
         this.engine = engine;
         this.firstName = data.firstName;
@@ -53,7 +65,7 @@ export class Player {
         };
         this.traits = new Collection(engine.traits.randomNonColliding(Random.btw(1, 3)).map(t => [t.id, t]));
         this.tribe = tribe;
-        this.strategy = data.strategy || new (engine.strategies.random())(this); 
+        this.strategy = data.strategy || this.engine.strategies.randomInstance(this);
         this.relationships = new RelationshipMap();
     }
 
@@ -85,6 +97,29 @@ export class Player {
 
     get alliances() : Array<Alliance> {
         return this.engine.alliances.filter(a => a.creator === this || a.members.has(this.id));
+    }
+
+}
+
+export class PlayerStore extends Collection<Player, number> {
+
+    get eliminated() : Array<Player> {
+        return this.filterArray(player => player.state === PlayerState.Eliminated);
+    }
+
+    /**
+     * Gets the players who are either in game or in limbo.
+     */
+    get active() : Array<Player> {
+        return this.filterArray(player => player.state !== PlayerState.Eliminated);
+    }
+
+    get inGame() : Array<Player> {
+        return this.filterArray(player => player.state === PlayerState.InGame);
+    }
+
+    get inLimbo() : Array<Player> {
+        return this.filterArray(player => player.state === PlayerState.Limbo);
     }
 
 }

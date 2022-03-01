@@ -28,7 +28,7 @@ export class Trait extends EventEmitter<string|number, [Player, ...Array<unknown
     
 }
 
-export class TraitCollection extends WeightedArray<Trait> {
+export class TraitStore extends WeightedArray<Trait> {
 
     add(...traits: Array<ITraitData>) : void {
         this.push(...traits.map(t => new Trait(t)));

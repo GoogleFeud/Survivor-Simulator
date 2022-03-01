@@ -3,14 +3,13 @@ import seedrandom from "seedrandom";
 import { Clock } from "./clock";
 import { Mod } from "./mods";
 import { Alliance } from "./player/alliance";
-import { IPlayerData, Player } from "./player/player";
-import { Strategy } from "./player/strategy";
-import { TraitCollection } from "./player/trait";
+import { IPlayerData, PlayerStore, Player } from "./player/player";
+import { StartegyStore } from "./player/strategy";
+import { TraitStore } from "./player/trait";
 import { ITribeData, Tribe } from "./player/tribe";
 import { shuffleArray } from "./utils";
 import { Collection } from "./utils/Collection";
 import { EventEmitter } from "./utils/EventEmitter";
-import { WeightedArray } from "./utils/WeightedArray";
 
 export interface IEngineSettings {
     mods?: Array<Mod>,
@@ -19,21 +18,21 @@ export interface IEngineSettings {
 }
 
 export class Engine extends EventEmitter<string|number> {
-    traits: TraitCollection;
+    traits: TraitStore;
     clock: Clock;
-    players: Collection<Player, number>;
+    players: PlayerStore;
     alliances: Array<Alliance>;
-    strategies: WeightedArray<typeof Strategy>;
+    strategies: StartegyStore;
     tribes: Collection<Tribe>;
     mods: Map<string, Mod>;
     constructor(options: IEngineSettings) {
         super();
         seedrandom(options.seed, { global: true });
-        this.traits = new TraitCollection();
+        this.traits = new TraitStore();
         this.clock = new Clock(this);
-        this.players = new Collection();
+        this.players = new PlayerStore();
         this.alliances = [];
-        this.strategies = new WeightedArray();
+        this.strategies = new StartegyStore();
         this.tribes = new Collection();
         this.mods = new Map();
         if (options.mods) {
